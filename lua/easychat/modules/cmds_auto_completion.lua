@@ -28,8 +28,8 @@ if SERVER and aowl then
 end
 
 if CLIENT then
-	local EC_CMDS_SUGGESTIONS = CreateConVar("easychat_cmd_suggestions", "1", FCVAR_ARCHIVE, "Shows suggestions for commands")
-	EasyChat.RegisterConvar(EC_CMDS_SUGGESTIONS, "Displays command suggestions")
+	local EC_CMDS_SUGGESTIONS = CreateConVar("easychat_cmd_suggestions", "1", FCVAR_ARCHIVE, "Показывать Автозаполнения Команд")
+	EasyChat.RegisterConvar(EC_CMDS_SUGGESTIONS, "Показывать Автозаполнения Команд")
 
 	local color_white = color_white
 	local black_color = Color(0, 0, 0, 200)
@@ -64,11 +64,11 @@ if CLIENT then
 	if ulx and ULib then
 		local categories = ulx.cmdsByCategory
 		local ulx_args_lookup = {
-			[ULib.cmds.NumArg] = "Number",
+			[ULib.cmds.NumArg] = "Цифра",
 			[ULib.cmds.BoolArg] = "1/0",
-			[ULib.cmds.PlayersArg] = "Players",
-			[ULib.cmds.PlayerArg] = "Player",
-			[ULib.cmds.StringArg] = "Text",
+			[ULib.cmds.PlayersArg] = "Игроки",
+			[ULib.cmds.PlayerArg] = "Игрок",
+			[ULib.cmds.StringArg] = "Текст",
 		}
 
 		local function generate_ulx_cmds_lookup()
