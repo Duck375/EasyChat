@@ -153,14 +153,14 @@ if CLIENT then
 			if EC_HISTORY:GetBool() then
 				local history = EasyChat.ReadFromHistory("admin")
 				if EasyChat.IsStringEmpty(history) then
-					EasyChat.AddText(self.RichText, "Welcome to the admin chat!")
+					EasyChat.AddText(self.RichText, "Добро пожаловать в админ чат!")
 				else
 					self.RichText:AppendText(history) -- so we do not log twice
-					self.RichText:AppendText("\n^^^^^ Last Session History ^^^^^\n\n")
+					self.RichText:AppendText("\n^^^^^ Чат прошлой Сессии ^^^^^\n\n")
 					self.RichText:GotoTextEnd()
 				end
 			else
-				EasyChat.AddText(self.RichText, "Welcome to the admin chat!")
+				EasyChat.AddText(self.RichText, "Добро пожаловать в админ чат!")
 			end
 		end,
 		Notify = function(self, ply, message)
@@ -168,7 +168,7 @@ if CLIENT then
 				self.NewMessages = self.NewMessages + 1
 				EasyChat.FlashTab("Admin")
 			end
-			_G.chat.AddText(color_white, "[Admin Chat | ", Color(255, 127, 127), ply, color_white, "] " .. message)
+			_G.chat.AddText(color_white, "[Админ чат | ", Color(255, 127, 127), ply, color_white, "] " .. message)
 		end,
 		SendMessage = function(self, msg)
 			net.Start(EASYCHAT_ADMIN)
@@ -219,7 +219,7 @@ if CLIENT then
 			admintab.NewMessages = 0
 			admintab.RichText:GotoTextEnd()
 			if not LocalPlayer():IsAdmin() then
-				EasyChat.AddText(admintab.RichText, "You cannot see the content of this channel because you are not an admin")
+				EasyChat.AddText(admintab.RichText, "Вы не можете видеть сообщения в админ чате так-как вы не админ")
 			end
 		end
 	end)
