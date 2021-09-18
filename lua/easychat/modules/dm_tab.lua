@@ -161,13 +161,13 @@ if CLIENT then
 			if EC_HISTORY:GetBool() then
 				local history = EasyChat.ReadFromHistory(id64)
 				if EasyChat.IsStringEmpty(history) then
-					EasyChat.AddText(richtext, "This is the beginning of your conversation!\n\n")
+					EasyChat.AddText(richtext, "Это начало вашей беседы!\n\n")
 				else
 					richtext:AppendText(history) -- so we do not log twice
-					richtext:AppendText("\n^^^^^ Last Session History ^^^^^\n\n")
+					richtext:AppendText("\n^^^^^ Чат прошлой Сессии ^^^^^\n\n")
 				end
 			else
-				EasyChat.AddText(richtext, "This is the beginning of your conversation!\n\n")
+				EasyChat.AddText(richtext, "Это начало вашей беседы!\n\n")
 			end
 
 			return chat
@@ -204,7 +204,7 @@ if CLIENT then
 				net.WriteString(message)
 				net.SendToServer()
 			else
-				EasyChat.AddText(chat.RichText, "The player you are trying to message is not on the server anymore!")
+				EasyChat.AddText(chat.RichText, "Игрок которому вы пытаетесь написать уже не на сервере!")
 			end
 
 			self.TextEntry:SetText("")
