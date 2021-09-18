@@ -1,9 +1,9 @@
-local EC_MENTION = CreateConVar("easychat_mentions", "1", FCVAR_ARCHIVE, "Highlights messages containing your name")
-local EC_MENTION_FLASH = CreateConVar("easychat_mentions_flash_window", "1", FCVAR_ARCHIVE, "Flashes your window when you get mentioned")
-local EC_MENTION_COLOR = CreateConVar("easychat_mentions_color", "244 167 66", FCVAR_ARCHIVE, "Color of the mentions")
-local EC_MENTION_SHOW_MISSED = CreateConVar("easychat_mentions_show_missed", "1", FCVAR_ARCHIVE, "Show mentions you have missed when AFK / tabbed out")
+local EC_MENTION = CreateConVar("easychat_mentions", "1", FCVAR_ARCHIVE, "Подсвечивать сообщения содержащие ваше имя")
+local EC_MENTION_FLASH = CreateConVar("easychat_mentions_flash_window", "1", FCVAR_ARCHIVE, "Мигать окном когда вас упомянули")
+local EC_MENTION_COLOR = CreateConVar("easychat_mentions_color", "244 167 66", FCVAR_ARCHIVE, "Цвет упоминаний")
+local EC_MENTION_SHOW_MISSED = CreateConVar("easychat_mentions_show_missed", "1", FCVAR_ARCHIVE, "Показывать упоминания которые вы пропустили в AFK / Альт-Табе")
 
-local EC_MENTION_FILTERS = CreateConVar("easychat_mentions_filters", "1", FCVAR_ARCHIVE, "Enables mention filters")
+local EC_MENTION_FILTERS = CreateConVar("easychat_mentions_filters", "1", FCVAR_ARCHIVE, "Включить Фильтр Упоминаний")
 local FILTER_PATH = "easychat/mention_filters.txt"
 
 local mentions = {}
@@ -36,22 +36,22 @@ end
 
 do
 	local settings = EasyChat.Settings
-	local category_name = "Mentions"
+	local category_name = "Упоминания"
 
 	settings:AddCategory(category_name)
 
 	settings:AddConvarSettingsSet(category_name, {
-		[EC_MENTION] = "Color messages containing your name",
-		[EC_MENTION_FLASH] = "Flashes your game when you are mentioned",
-		[EC_MENTION_SHOW_MISSED] = "Show mentions you have missed when AFK / tabbed out"
+		[EC_MENTION] = "Красить сообщения с вашим именем",
+		[EC_MENTION_FLASH] = "Мигать игрой когда вас упомянули",
+		[EC_MENTION_SHOW_MISSED] = "Показывать упоминания которые вы пропустили в AFK / Альт-Табе"
 	})
 
 	settings:AddSpacer(category_name)
 
-	local setting_mention_color = settings:AddSetting(category_name, "color", "Mention Color")
+	local setting_mention_color = settings:AddSetting(category_name, "color", "Цвет Упоминания")
 	setting_mention_color:SetColor(mentions:GetColor())
 
-	local setting_save_color = settings:AddSetting(category_name, "action", "Save Mention Color")
+	local setting_save_color = settings:AddSetting(category_name, "action", "Сохранить Цвет Упоминания")
 	setting_save_color.DoClick = function()
 		local color = setting_mention_color:GetColor()
 		EC_MENTION_COLOR:SetString(("%d %d %d"):format(color.r, color.g, color.b))
@@ -59,7 +59,7 @@ do
 
 	settings:AddSpacer(category_name)
 
-	settings:AddConvarSetting(category_name, "boolean", EC_MENTION_FILTERS, "Enable mention filters")
+	settings:AddConvarSetting(category_name, "boolean", EC_MENTION_FILTERS, "Включить Фильтр Упоминаний")
 	local setting_filters = settings:AddSetting(category_name, "list", "Filters")
 	setting_filters.List:SetMultiSelect(false)
 	setting_filters.List:AddColumn("Filter")
@@ -73,7 +73,7 @@ do
 
 	build_filter_list()
 
-	local setting_add_filter = settings:AddSetting(category_name, "action", "Add Filter")
+	local setting_add_filter = settings:AddSetting(category_name, "action", "Добавить Фильтр")
 	setting_add_filter.DoClick = function()
 		EasyChat.AskForInput("Add Filter", function(filter)
 			table.insert(mentions.Filters, filter)
@@ -82,7 +82,7 @@ do
 		end, false)
 	end
 
-	local setting_remove_filter = settings:AddSetting(category_name, "action", "Remove Filter")
+	local setting_remove_filter = settings:AddSetting(category_name, "action", "Удалить Фильтр")
 	setting_remove_filter.DoClick = function()
 		local _, selected_line = setting_filters.List:GetSelectedLine()
 		if not IsValid(selected_line) then return end
