@@ -372,6 +372,7 @@ if CLIENT then
 	local EC_TIMESTAMPS_COLOR = CreateConVar("easychat_timestamps_color", "255 255 255", FCVAR_ARCHIVE, "Color timestamps display in")
 
 	-- chatbox panel
+	local EC_TAGS_IN_CHATBOX = CreateConVar("easychat_tags_in_chatbox", "1", FCVAR_ARCHIVE, "Display tags in the chatbox")
 	local EC_GLOBAL_ON_OPEN = CreateConVar("easychat_global_on_open", "1", FCVAR_ARCHIVE, "Set the chat to always open global chat tab on open")
 	local EC_FONT = CreateConVar("easychat_font", "Roboto", FCVAR_ARCHIVE, "Set the font to use for the chat")
 	local EC_FONT_SIZE = CreateConVar("easychat_font_size", "17", FCVAR_ARCHIVE, "Set the font size for chatbox")
@@ -741,16 +742,15 @@ if CLIENT then
 	end
 	EasyChat.Close = close_chatbox
 
+	local url_patterns = {
+		"https?://[^%s%\"%>%<]+",
+		"ftp://[^%s%\"%>%<]+",
+		"steam://[^%s%\"%>%<]+",
+		"www%.[^%s%\"]+%.[^%s%\"]+",
+		"STEAM_%d%:%d%:%d+"
+	}
 	function EasyChat.IsURL(str)
-		local patterns = {
-			"https?://[^%s%\"%>%<]+",
-			"ftp://[^%s%\"%>%<]+",
-			"steam://[^%s%\"%>%<]+",
-			"www%.[^%s%\"]+%.[^%s%\"]+",
-			"STEAM_%d%:%d%:%d+"
-		}
-
-		for _, pattern in ipairs(patterns) do
+		for _, pattern in ipairs(url_patterns) do
 			local start_pos, end_pos = str:find(pattern, 1, false)
 			if start_pos then
 				return start_pos, end_pos
@@ -774,6 +774,16 @@ if CLIENT then
 		if ok == false then return end
 
 		gui.OpenURL(url)
+	end
+
+	function EasyChat.CreateTextInteraction(text, on_click, on_hover, ...)
+		return EC_ENABLE:GetBool() and {
+			Text = text,
+			OnClick = on_click,
+			OnHover = on_hover,
+			Context = { ... },
+			__type = "TextInteraction"
+		} or text
 	end
 
 	function EasyChat.CreateFrame()
@@ -1017,7 +1027,7 @@ if CLIENT then
 	end
 
 	function EasyChat.UploadToImgur(img_base64, callback)
-		local ply_nick, ply_steamid = LocalPlayer():Nick(), LocalPlayer():SteamID()
+		local ply_nick, ply_steamid = EasyChat.GetProperNick(LocalPlayer()), LocalPlayer():SteamID()
 		local params = {
 			image = img_base64,
 			type = "base64",
@@ -1124,6 +1134,11 @@ if CLIENT then
 	end
 
 	local function append_text(richtext, text)
+		if not EC_TAGS_IN_CHATBOX:GetBool() and ec_markup then
+			-- expensive but its not a behavior we want to encourage, so too bad :v
+			text = ec_markup.Parse(text):GetText()
+		end
+
 		if richtext.HistoryName then
 			richtext.Log = richtext.Log and richtext.Log .. text or text
 		end
@@ -1495,6 +1510,8 @@ if CLIENT then
 			return { ... }
 		end
 
+		safe_hook_run("ECPreAddText", ...)
+
 		local data = {}
 
 		if EC_HUD_CUSTOM:GetBool() then
@@ -1528,11 +1545,17 @@ if CLIENT then
 
 		local args = {...}
 		for _, arg in pairs(args) do
-			local callback = ec_addtext_handles[type(arg)]
+			local arg_type = type(arg)
+			if arg_type == "table" and isstring(arg.__type) then
+				arg_type = arg.__type
+			end
+
+			local callback = ec_addtext_handles[arg_type]
 			if callback then
 				local succ, ret = xpcall(callback, function(err)
 					ErrorNoHalt(debug.traceback(err))
 				end, arg)
+
 				if succ and ret then
 					if is_color(ret) or isstring(ret) then
 						table.insert(data, ret)
@@ -1556,6 +1579,8 @@ if CLIENT then
 		if EC_TICK_SOUND:GetBool() then
 			chat.PlaySound()
 		end
+
+		safe_hook_run("ECPostAddText", ...)
 
 		return data
 	end
@@ -1679,6 +1704,17 @@ if CLIENT then
 			end
 
 			return color_white
+		end)
+
+		EasyChat.SetAddTextTypeHandle("TextInteraction", function(interaction)
+			if isstring(interaction.Text) then
+				EasyChat.GUI.RichText:AppendClickableText(interaction.Text, interaction.OnClick, interaction.OnHover, interaction.Context)
+				chathud_append_text(interaction.Text)
+
+				return interaction.Text
+			end
+
+			return ""
 		end)
 
 		EasyChat.SetAddTextTypeHandle("string", function(str) return global_append_text_url(str) end)
@@ -2354,13 +2390,27 @@ if CLIENT then
 		end
 
 		local clickable_callback_id = 0
+		local callbacks_data = {}
 		local clickable_callbacks = {}
+		local hoverable_callbacks = {}
+
+		-- clear the callbacks after 5 minutes to prevent memory leaking
+		timer.Create("EasyChatTextCallbackExpiration", 60, 0, function()
+			for id, data in pairs(callbacks_data) do
+				if CurTime() > data.Expiration then
+					clickable_callbacks[id] = nil
+					hoverable_callbacks[id] = nil
+					callbacks_data[id] = nil
+				end
+			end
+		end)
+
 		function EasyChat.GUI.RichText:ActionSignal(name, value)
 			if name ~= "TextClicked" then return end
 
 			local interaction_id = tonumber(value:match("^CustomInteraction: (%d+)"))
 			if interaction_id and clickable_callbacks[interaction_id] then
-				clickable_callbacks[interaction_id]()
+				clickable_callbacks[interaction_id](self, callbacks_data[interaction_id])
 				return
 			end
 
@@ -2389,7 +2439,7 @@ if CLIENT then
 				if IsValid(ply) then
 					local info_panel = vgui.Create("AvatarImage")
 					info_panel:SetSize(128, 128)
-					info_panel:SetPos(gui.MouseX(), gui.MouseY() - 132)
+					info_panel:SetPos(gui.MouseX(), gui.MouseY() - (info_panel:GetTall() + 20))
 					info_panel:SetPlayer(ply, 128)
 					info_panel:SetDrawOnTop(true)
 					info_panel.Think = function()
@@ -2413,7 +2463,7 @@ if CLIENT then
 						local info_panel = vgui.Create("DPanel")
 						local mk = ec_markup.Parse(steam_name, nil, true)
 						info_panel:SetSize(mk:GetWide() + 10, mk:GetTall() + 10)
-						info_panel:SetPos(gui.MouseX(), gui.MouseY() - info_panel:GetTall())
+						info_panel:SetPos(gui.MouseX(), gui.MouseY() - (info_panel:GetTall() + 20))
 						info_panel:SetDrawOnTop(true)
 						info_panel.Think = function()
 							if not IsValid(self) or not self:IsHovered() then
@@ -2449,16 +2499,30 @@ if CLIENT then
 				return
 			end
 
+			local interaction_id = tonumber(text_value:match("^CustomInteraction: (%d+)"))
+			if interaction_id and hoverable_callbacks[interaction_id] then
+				hoverable_callbacks[interaction_id](self, is_hover, callbacks_data[interaction_id])
+				return
+			end
+
 			-- handle more hovering hacks (?)
 			safe_hook_run("ECOnTextHover", self, text_value, is_hover)
 		end
 
-		function EasyChat.GUI.RichText:AppendClickableText(text, callback)
+		-- the hover callback only works with RichTextX
+		function EasyChat.GUI.RichText:AppendClickableText(text, click_callback, hover_callback, ctx)
 			self:InsertClickableTextStart(("CustomInteraction: %d"):format(clickable_callback_id))
 			append_text(self, text)
 			self:InsertClickableTextEnd()
 
-			clickable_callbacks[clickable_callback_id] = callback
+			clickable_callbacks[clickable_callback_id] = click_callback
+			hoverable_callbacks[clickable_callback_id] = hover_callback
+			callbacks_data[clickable_callback_id] = {
+				Id = clickable_callback_id,
+				Expiration = CurTime() + 60 * 5,
+				Context = ctx
+			}
+
 			clickable_callback_id = clickable_callback_id + 1
 		end
 
