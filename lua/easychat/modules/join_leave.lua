@@ -196,9 +196,9 @@ if CLIENT then
 			end
 		else
 			if reason == "Gave up connecting" then
-				chat.AddText(red_color, " ● ", ply_col, name, gray_color, formatted_id, red_color, "gave up", white_color, " connecting")
+				chat.AddText(red_color, " ● ", ply_col, name, gray_color, formatted_id, red_color, "отменил", white_color, " подключение")
 			else
-				chat.AddText(red_color, " ● ", ply_col, name, gray_color, formatted_id, white_color, "has ", red_color, "left", white_color, " the server", red_color, " (" .. reason .. ")")
+				chat.AddText(red_color, " ● ", ply_col, name, gray_color, formatted_id, white_color, " ", red_color, "покинул", white_color, " сервер", red_color, " (" .. reason .. ")")
 			end
 		end
 	end)
@@ -210,7 +210,7 @@ if CLIENT then
 		if not friend_ids[network_id] then return end
 		if EasyChat.BlockedPlayers[network_id] then return end -- friends can block each others on steam
 		if EasyChat.IsStringEmpty(name, true) then name = "[NO NAME]" end
-		chat.AddText(green_color, " ● Friend joining ", white_color, name, gray_color, " (" .. network_id .. ")")
+		chat.AddText(green_color, " ● Друг заходит ", white_color, name, gray_color, " (" .. network_id .. ")")
 	end)
 end
 
