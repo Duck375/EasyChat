@@ -55,6 +55,15 @@ function PANEL:Init()
 					width: 100%;
 					height: 95%;
 				}
+
+				.blur {
+					filter: blur(20px);
+				}
+
+				img {
+
+					overflow: hidden;
+				}
 			</style>
 			<pre id="main"></pre>
 		</body>
@@ -119,10 +128,7 @@ function PANEL:Init()
 			}
 		});
 
-		let span = null;
-		let img = null;
 		let isAtBottom = false;
-
 		function atBottom() {
 			if (BODY.scrollTop === 0) return true;
 
@@ -195,15 +201,15 @@ function PANEL:AppendText(text)
 
 	local limit = GetConVar("easychat_modern_text_history_limit"):GetInt() * AVERAGE_AMOUNT_OF_ELEMENTS_PER_LINE
 	local css_color = ("rgb(%d,%d,%d)"):format(self.CurrentColor.r, self.CurrentColor.g, self.CurrentColor.b)
-	local js = (self.ClickableTextValue and [[
-		span = document.createElement("span");
+	local js = (self.ClickableTextValue and [[{
+		let span = document.createElement("span");
 		span.onclick = () => RichTextX.OnClick(`]] .. self.ClickableTextValue .. [[`);
 		span.onmouseenter = () => RichTextX.OnTextHover(`]] .. self.ClickableTextValue .. [[`, true);
 		span.onmouseleave = () => RichTextX.OnTextHover(`]] .. self.ClickableTextValue .. [[`, false);
 		span.clickableText = true;
 		span.style.cursor = "pointer";
 		span.style.color = `]] .. css_color .. [[`;
-	]] or [[
+	]] or [[{
 		span = document.createElement("span");
 		span.style.color = `]] .. css_color .. [[`;
 	]]) .. [[
@@ -218,7 +224,7 @@ function PANEL:AppendText(text)
 		if (isAtBottom) {
 			window.scrollTo(0, BODY.scrollHeight);
 		}
-	]]
+	}]]
 
 	self:QueueJavascript(js)
 end
@@ -227,17 +233,27 @@ function PANEL:AppendImageURL(url)
 	url = url:JavascriptSafe()
 
 	local limit = GetConVar("easychat_modern_text_history_limit"):GetInt() * AVERAGE_AMOUNT_OF_ELEMENTS_PER_LINE
-	self:QueueJavascript([[
-		img = document.createElement("img");
+	self:QueueJavascript([[{
+		let imgContainer = document.createElement("div");
+		imgContainer.style.overflow = "hidden";
+		imgContainer.style.display = "inline-block";
+
+		let img = document.createElement("img");
 		img.onclick = () => RichTextX.OnClick(`]] .. url .. [[`);
 		img.style.cursor = "pointer";
 		img.src = `]] .. url .. [[`;
 		img.style.maxWidth = `80%`;
 		img.style.maxHeight = `300px`;
+		if (]] .. (GetConVar("easychat_blur_images"):GetBool() and "true" or "false") .. [[) {
+			img.classList.add('blur');
+			img.onmouseover = () => img.classList.remove('blur');
+			img.onmouseout = () => img.classList.add('blur');
+		}
 
 		isAtBottom = atBottom();
 		RICHTEXT.appendChild(document.createElement("br"));
-		RICHTEXT.appendChild(img);
+		imgContainer.appendChild(img);
+		RICHTEXT.appendChild(imgContainer);
 		RICHTEXT.appendChild(document.createElement("br"));
 
 		if (]] .. limit .. [[> 0 && ]] .. limit .. [[ <= RICHTEXT.childElementCount && RICHTEXT.children[0]) {
@@ -247,7 +263,7 @@ function PANEL:AppendImageURL(url)
 		if (isAtBottom) {
 			window.scrollTo(0, BODY.scrollHeight);
 		}
-	]])
+	}]])
 end
 
 function PANEL:InsertColorChange(r, g, b)
