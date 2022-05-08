@@ -83,26 +83,26 @@ local function create_default_settings()
 		settings:AddCategory(category_name)
 
 		settings:AddConvarSettingsSet(category_name, {
-			[EC_ALWAYS_LOCAL] = "Always talk in local mode by default",
-			[EC_ONLY_LOCAL] = "Only receive local messages",
-			[EC_LINKS_CLIPBOARD] = "Automatically copy links to your clipboard",
-			[EC_TEAMS] = "Display teams",
-			[EC_TEAMS_COLOR] = "Color the team tags",
-			[EC_PLAYER_COLOR] = "Color players in their team color",
-			[EC_PLAYER_PASTEL] = "Pastellize player colors",
-			[EC_TICK_SOUND] = "Tick sound on new messages",
-			[EC_USE_ME] = "Replaces your name in the chat with \"me\"",
-			[EC_GM_COMPLETE] = "Use the default gamemode auto-completion",
-			[EC_NICK_COMPLETE] = "Auto-complete player names",
-			[EC_NICK_PRIORITIZE] = "Prioritize player name completions over everything else",
-			[EC_OUT_CLICK_CLOSE] = "Close the chat when clicking away",
-			[EC_SERVER_MSG] = "Show changes made to the server cvars",
-			[EC_SKIP_STARTUP_MSG] = "Skips annoying addon startup messages (displays in console)",
+			[EC_ALWAYS_LOCAL] = "По умолчанию говорить в локальный чат",
+			[EC_ONLY_LOCAL] = "Получить только локальные сообщения",
+			[EC_LINKS_CLIPBOARD] = "Автоматически копировать ссылки",
+			[EC_TEAMS] = "Показывать тэг команды",
+			[EC_TEAMS_COLOR] = "Показывать цвет тэга команды",
+			[EC_PLAYER_COLOR] = "Красить игроков в цвет их команды",
+			[EC_PLAYER_PASTEL] = "Пастеллизовать цвета игроков",
+			[EC_TICK_SOUND] = "Звук щелчка на новых сообщениях",
+			[EC_USE_ME] = "Заменит ваше имя в чате на \"me\"",
+			[EC_GM_COMPLETE] = "Использовать стандартное автозаполнение режима",
+			[EC_NICK_COMPLETE] = "Автозаполнять именя игроков",
+			[EC_NICK_PRIORITIZE] = "Приоритизировать заполнение имен игроков по сравнению со всем остальным",
+			[EC_OUT_CLICK_CLOSE] = "Закрывать чат при клике вне его",
+			[EC_SERVER_MSG] = "Показывать изменение в серверных cvars",
+			[EC_SKIP_STARTUP_MSG] = "Пропускать сообщения об запуске аддонов (показывается в консоле)",
 		})
 
 		settings:AddSpacer(category_name)
 
-		local setting_blocked_players = settings:AddSetting(category_name, "list", "Blocked Users")
+		local setting_blocked_players = settings:AddSetting(category_name, "list", "Заблокированные Игроки")
 		local blocked_players_list = setting_blocked_players.List
 		blocked_players_list:SetMultiSelect(true)
 		blocked_players_list:AddColumn("SteamID")
@@ -132,7 +132,7 @@ local function create_default_settings()
 		hook.Add("ECBlockedPlayer", blocked_players_list, build_blocked_players_list)
 		hook.Add("ECUnblockedPlayer", blocked_players_list, build_blocked_players_list)
 
-		local setting_unblock_player = settings:AddSetting(category_name, "action", "Unblock Player(s)")
+		local setting_unblock_player = settings:AddSetting(category_name, "action", "Разблокировать Игрока(ов)")
 		setting_unblock_player.DoClick = function()
 			local lines = blocked_players_list:GetSelected()
 			for _, line in pairs(lines) do
@@ -144,7 +144,7 @@ local function create_default_settings()
 			build_blocked_players_list()
 		end
 
-		local setting_blocked_strings = settings:AddSetting(category_name, "list", "Blocked Words")
+		local setting_blocked_strings = settings:AddSetting(category_name, "list", "Заблокированные слова")
 		local blocked_strings_list = setting_blocked_strings.List
 		blocked_strings_list:SetMultiSelect(true)
 		blocked_strings_list:AddColumn("Id")
@@ -161,7 +161,7 @@ local function create_default_settings()
 
 		build_blocked_strings_list()
 
-		local setting_block_string = settings:AddSetting(category_name, "action", "Block Word")
+		local setting_block_string = settings:AddSetting(category_name, "action", "Заблокировать слово")
 		setting_block_string.DoClick = function()
 			local frame
 			frame = EasyChat.AskForInput("Block a word", function(str)
@@ -175,7 +175,7 @@ local function create_default_settings()
 			frame.IsPattern:Dock(FILL)
 		end
 
-		local setting_unblock_string = settings:AddSetting(category_name, "action", "Unblock Word")
+		local setting_unblock_string = settings:AddSetting(category_name, "action", "Разблокировать слово")
 		setting_unblock_string.DoClick = function()
 			local lines = blocked_strings_list:GetSelected()
 			for _, line in pairs(lines) do
@@ -189,7 +189,7 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		local setting_secondary_mode = settings:AddConvarSetting(category_name, "string", EC_SECONDARY, "Secondary Message Mode")
+		local setting_secondary_mode = settings:AddConvarSetting(category_name, "string", EC_SECONDARY, "Вторичный режим сообщений")
 		setting_secondary_mode.GetAutoComplete = function(self, text)
 			local suggestions = {}
 			for _, mode in pairs(EasyChat.Modes) do
@@ -229,9 +229,9 @@ local function create_default_settings()
 			end
 		end
 
-		settings:AddConvarSetting(category_name, "number", EC_LOCAL_MSG_DIST, "Local Message Distance", 1000, 100)
+		settings:AddConvarSetting(category_name, "number", EC_LOCAL_MSG_DIST, "Дистанция Локального чата", 1000, 100)
 
-		local setting_reset_misc = settings:AddSetting(category_name, "action", "Reset Options")
+		local setting_reset_misc = settings:AddSetting(category_name, "action", "Сбросить Настройки")
 		setting_reset_misc.DoClick = function()
 			local default_distance = tonumber(EC_LOCAL_MSG_DIST:GetDefault())
 			EC_LOCAL_MSG_DIST:SetInt(default_distance)
@@ -240,17 +240,17 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		settings:AddConvarSetting(category_name, "boolean", EC_TIMESTAMPS, "Display timestamps")
-		settings:AddConvarSetting(category_name, "boolean", EC_TIMESTAMPS_12, "12 hours mode timestamps")
-		settings:AddConvarSetting(category_name, "boolean", EC_HUD_TIMESTAMPS, "Display timestamps in Chat HUD")
+		settings:AddConvarSetting(category_name, "boolean", EC_TIMESTAMPS, "Показывать временные отметки")
+		settings:AddConvarSetting(category_name, "boolean", EC_TIMESTAMPS_12, "12 часовой формат")
+		settings:AddConvarSetting(category_name, "boolean", EC_HUD_TIMESTAMPS, "Показывать временные отметки в Chat HUD")
 
-		local setting_timestamps_color = settings:AddSetting(category_name, "color", "Timestamp Color")
+		local setting_timestamps_color = settings:AddSetting(category_name, "color", "Цвет временных отметок")
 		setting_timestamps_color:SetColor(EasyChat.TimestampColor)
 		setting_timestamps_color.OnValueChanged = function(_, color)
 			EC_TIMESTAMPS_COLOR:SetString(("%d %d %d"):format(color.r, color.g, color.b))
 		end
 
-		local setting_reset_timestamps = settings:AddSetting(category_name, "action", "Reset Options")
+		local setting_reset_timestamps = settings:AddSetting(category_name, "action", "Сбросить Настройки")
 		setting_reset_timestamps.DoClick = function()
 			EC_TIMESTAMPS:SetBool(tobool(EC_TIMESTAMPS:GetDefault()))
 			EC_TIMESTAMPS_12:SetBool(tobool(EC_TIMESTAMPS_12:GetDefault()))
@@ -261,10 +261,10 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		local setting_ignored_modules = settings:AddSetting(category_name, "list", "Ignored Modules")
+		local setting_ignored_modules = settings:AddSetting(category_name, "list", "Игнорируемые модули")
 		local ignored_modules_list = setting_ignored_modules.List
 		ignored_modules_list:SetMultiSelect(true)
-		ignored_modules_list:AddColumn("Path (Relative to Lua folder)")
+		ignored_modules_list:AddColumn("Путь (относительно папки Lua)")
 
 		local function build_ignore_module_list()
 			ignored_modules_list:Clear()
@@ -277,10 +277,10 @@ local function create_default_settings()
 		build_ignore_module_list()
 		hook.Add("ECServerConfigUpdate", ignored_modules_list, build_ignore_module_list)
 
-		local setting_ignore_module = settings:AddSetting(category_name, "action", "Ignore Module")
+		local setting_ignore_module = settings:AddSetting(category_name, "action", "Игнорировать Модуль")
 		setting_ignore_module:SetImage("icon16/shield.png")
 		setting_ignore_module.DoClick = function()
-			EasyChat.AskForInput("Ignore Module (Type a path relative to the Lua folder)", function(ignored_module_path)
+			EasyChat.AskForInput("Игнорировать модюдь (напиши путь отнсительно папки Lua)", function(ignored_module_path)
 				local old_list = table.Copy(EasyChat.Config.ModuleIgnoreList)
 				local current_list = EasyChat.Config.ModuleIgnoreList
 				table.insert(current_list, ignored_module_path)
@@ -294,7 +294,7 @@ local function create_default_settings()
 			end, false):SetWide(600)
 		end
 
-		local setting_unignore_module = settings:AddSetting(category_name, "action", "Unignore Module")
+		local setting_unignore_module = settings:AddSetting(category_name, "action", "Не Игнорировать Модуль")
 		setting_unignore_module:SetImage("icon16/shield.png")
 		setting_unignore_module.DoClick = function()
 			local old_list = table.Copy(EasyChat.Config.ModuleIgnoreList)
@@ -316,13 +316,13 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		local setting_disable_modules = settings:AddSetting(category_name, "action", EC_NO_MODULES:GetBool() and "Run Modules" or "Disallow Modules")
+		local setting_disable_modules = settings:AddSetting(category_name, "action", EC_NO_MODULES:GetBool() and "Запустить Модули" or "Запретить Модули")
 		setting_disable_modules.DoClick = function() EC_NO_MODULES:SetBool(not EC_NO_MODULES:GetBool()) end
 
-		local setting_reload_ec = settings:AddSetting(category_name, "action", "Reload EasyChat")
+		local setting_reload_ec = settings:AddSetting(category_name, "action", "Перезапустить SimpleChat")
 		setting_reload_ec.DoClick = function() EasyChat.Reload() end
 
-		local setting_disable_ec = settings:AddSetting(category_name, "action", "Disable EasyChat")
+		local setting_disable_ec = settings:AddSetting(category_name, "action", "Выключить SimpleChat")
 		setting_disable_ec.DoClick = function() EC_ENABLE:SetBool(false) end
 
 		local function delete_dir(dir_path)
@@ -341,8 +341,8 @@ local function create_default_settings()
 
 		local function factory_reset()
 			EasyChat.AskForValidation(
-				"Factory Reset",
-				"Are you sure you want to factory reset EasyChat? All your data will be deleted.",
+				"Заводской сброс",
+				"Вы уверены, что хотите сбросить SimpleChat до заводских настроек? Все ваши данные будут удалены.",
 				{
 					ok_text = "Reset",
 					ok_btn_color = Color(255, 0, 0),
@@ -360,9 +360,9 @@ local function create_default_settings()
 			)
 		end
 
-		local setting_factory_reset = settings:AddSetting(category_name, "action", "Factory Reset")
+		local setting_factory_reset = settings:AddSetting(category_name, "action", "Заводской Сброс")
 		setting_factory_reset.DoClick = factory_reset
-		concommand.Add("easychat_factory_reset", factory_reset, nil, "Factory reset EasyChat")
+		concommand.Add("easychat_factory_reset", factory_reset, nil, "Заводской Сброс SimpleChat")
 	end
 
 	-- chatbox settings
@@ -371,13 +371,13 @@ local function create_default_settings()
 		settings:AddCategory(category_name)
 
 		settings:AddConvarSettingsSet(category_name, {
-			[EC_GLOBAL_ON_OPEN] = "Open in the global tab",
-			[EC_HISTORY] = "Enable history",
-			[EC_TAGS_IN_CHATBOX] = "Shows tags in the chatbox",
-			[EC_IMAGES] = "Display images",
-			[EC_PEEK_COMPLETION] = "Peek at the possible chat completion",
-			[EC_NON_QWERTY] = "Specify whether you have a QWERTY keyboard or not",
-			[EC_BLUR_IMAGES] = "Blur images in the chatbox",
+			[EC_GLOBAL_ON_OPEN] = "Открывать в вкладке глобального чата",
+			[EC_HISTORY] = "Включить Историю",
+			[EC_TAGS_IN_CHATBOX] = "Показывать Теги",
+			[EC_IMAGES] = "Показывать Картинки",
+			[EC_PEEK_COMPLETION] = "Просмотр возможных автозаполнений чата",
+			[EC_NON_QWERTY] = "Уточнять используется-ли QWERTY клавиатура или нет",
+			[EC_BLUR_IMAGES] = "Применять размытие на картинки в чате",
 		})
 
 		settings:AddSpacer(category_name)
@@ -429,9 +429,9 @@ local function create_default_settings()
 				}
 			}
 
-			local setting_built_in_themes = settings:AddSetting(category_name, "action", "Built-in Themes")
+			local setting_built_in_themes = settings:AddSetting(category_name, "action", "Встроенные Темы")
 
-			local setting_outlay_color = settings:AddSetting(category_name, "color", "Outlay Color")
+			local setting_outlay_color = settings:AddSetting(category_name, "color", "Цвет Чата")
 			setting_outlay_color:SetColor(EasyChat.OutlayColor)
 			setting_outlay_color.OnValueChanged = function(_, color)
 				EasyChat.OutlayColor = Color(color.r, color.g, color.b, color.a)
@@ -444,13 +444,13 @@ local function create_default_settings()
 				end
 			end
 
-			local setting_outlay_outline_color = settings:AddSetting(category_name, "color", "Outlay Outline Color")
+			local setting_outlay_outline_color = settings:AddSetting(category_name, "color", "Цвет Обвода Чата")
 			setting_outlay_outline_color:SetColor(EasyChat.OutlayOutlineColor)
 			setting_outlay_outline_color.OnValueChanged = function(_, color)
 				EasyChat.OutlayOutlineColor = Color(color.r, color.g, color.b, color.a)
 			end
 
-			local setting_tab_color = settings:AddSetting(category_name, "color", "Tab Color")
+			local setting_tab_color = settings:AddSetting(category_name, "color", "Цвет Вкладок")
 			setting_tab_color:SetColor(EasyChat.TabColor)
 			setting_tab_color.OnValueChanged = function(_, color)
 				EasyChat.TabColor = Color(color.r, color.g, color.b, color.a)
@@ -461,7 +461,7 @@ local function create_default_settings()
 				end
 			end
 
-			local setting_tab_outline_color = settings:AddSetting(category_name, "color", "Tab Outline Color")
+			local setting_tab_outline_color = settings:AddSetting(category_name, "color", "Цвет Обводки Вкладок")
 			setting_tab_outline_color:SetColor(EasyChat.TabOutlineColor)
 			setting_tab_outline_color.OnValueChanged = function(_, color)
 				EasyChat.TabOutlineColor = Color(color.r, color.g, color.b, color.a)
@@ -491,7 +491,7 @@ local function create_default_settings()
 				themes_menu:Open()
 			end
 
-			local setting_save_colors = settings:AddSetting(category_name, "action", "Save Colors")
+			local setting_save_colors = settings:AddSetting(category_name, "action", "Сохранить цвета")
 			setting_save_colors.DoClick = function()
 				local text_entry = EasyChat.GUI.TextEntry
 				if IsValid(text_entry) and text_entry.ClassName == "TextEntryX" then
@@ -511,7 +511,7 @@ local function create_default_settings()
 				}, true))
 			end
 
-			local setting_reset_colors = settings:AddSetting(category_name, "action", "Reset Colors")
+			local setting_reset_colors = settings:AddSetting(category_name, "action", "Сбрость цвета")
 			setting_reset_colors.DoClick = function()
 				local outlay_color = EasyChat.DefaultColors.outlay
 				local outlay_outline_color = EasyChat.DefaultColors.outlayoutline
@@ -539,8 +539,8 @@ local function create_default_settings()
 			settings:AddSpacer(category_name)
 		end
 
-		settings:AddConvarSetting(category_name, "string", EC_FONT, "Font")
-		settings:AddConvarSetting(category_name, "number", EC_FONT_SIZE, "Font Size", 128, 5)
+		settings:AddConvarSetting(category_name, "string", EC_FONT, "Шрифт")
+		settings:AddConvarSetting(category_name, "number", EC_FONT_SIZE, "Размер Шрифта", 128, 5)
 
 		cvars.RemoveChangeCallback(EC_FONT:GetName(), EC_FONT:GetName())
 		cvars.RemoveChangeCallback(EC_FONT_SIZE:GetName(), EC_FONT_SIZE:GetName())
@@ -549,7 +549,7 @@ local function create_default_settings()
 		cvars.AddChangeCallback(EC_FONT:GetName(), font_change_callback, EC_FONT:GetName())
 		cvars.AddChangeCallback(EC_FONT_SIZE:GetName(), font_change_callback, EC_FONT_SIZE:GetName())
 
-		local setting_reset_font = settings:AddSetting(category_name, "action", "Reset Font")
+		local setting_reset_font = settings:AddSetting(category_name, "action", "Сбросить Шрифт")
 		setting_reset_font.DoClick = function()
 			local default_font, default_font_size = EC_FONT:GetDefault(), tonumber(EC_FONT_SIZE:GetDefault())
 			EC_FONT:SetString(default_font)
@@ -558,7 +558,7 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		local setting_tabs = settings:AddSetting(category_name, "list", "Tabs")
+		local setting_tabs = settings:AddSetting(category_name, "list", "Вкладки")
 		local tab_list = setting_tabs.List
 		tab_list:SetMultiSelect(true)
 		tab_list:AddColumn("Name")
@@ -572,7 +572,7 @@ local function create_default_settings()
 				tab_data.Tab:SetVisible(not is_visible)
 
 				-- this is inverted, because we get IsVisible before setting it
-				selected_line:SetColumnText(2, is_visible and "Yes" or "No")
+				selected_line:SetColumnText(2, is_visible and "Да" or "Нет")
 			end
 		end
 
@@ -583,11 +583,11 @@ local function create_default_settings()
 		tab_list.OnRowRightClick = function(_, _, line)
 			local tab_menu = DermaMenu()
 
-			tab_menu:AddOption(line:GetColumnText(2) == "Yes" and "Show" or "Hide", function()
+			tab_menu:AddOption(line:GetColumnText(2) == "Да" and "Показывать" or "Спрятать", function()
 				show_or_hide_tab(line)
 			end)
 			tab_menu:AddSpacer()
-			tab_menu:AddOption("Restrict", function()
+			tab_menu:AddOption("Запретить", function()
 				local succ, err = EasyChat.Config:WriteTab(line:GetColumnText(1), false)
 				if not succ then
 					notification.AddLegacy(err, NOTIFY_ERROR, 3)
@@ -595,7 +595,7 @@ local function create_default_settings()
 				end
 			end):SetImage("icon16/shield.png")
 			tab_menu:AddSpacer()
-			tab_menu:AddOption("Cancel", function() tab_menu:Remove() end)
+			tab_menu:AddOption("Отмена", function() tab_menu:Remove() end)
 
 			tab_menu:Open()
 		end
@@ -610,7 +610,7 @@ local function create_default_settings()
 
 			for tab_name, tab_data in pairs(EasyChat.GetTabs()) do
 				if not tab_class_blacklist[tab_data.Panel.ClassName] then
-					tab_list:AddLine(tab_name, tab_data.Tab:IsVisible() and "No" or "Yes")
+					tab_list:AddLine(tab_name, tab_data.Tab:IsVisible() and "Нет" or "Да")
 				end
 			end
 		end
@@ -618,7 +618,7 @@ local function create_default_settings()
 		build_tab_list()
 		hook.Add("ECSettingsOpened", tab_list, build_tab_list)
 
-		local setting_apply_tab = settings:AddSetting(category_name, "action", "Hide / Show Tab")
+		local setting_apply_tab = settings:AddSetting(category_name, "action", "Спрятать / Показать Вкладку")
 		setting_apply_tab.DoClick = function()
 			local selected_lines = tab_list:GetSelected()
 			for _, selected_line in pairs(selected_lines) do
@@ -626,14 +626,14 @@ local function create_default_settings()
 			end
 		end
 
-		local setting_manage_tabs = settings:AddSetting(category_name, "action", "(ADMIN) Manage Tabs")
+		local setting_manage_tabs = settings:AddSetting(category_name, "action", "(ADMIN) Управлять Вкладками")
 		setting_manage_tabs:SetImage("icon16/shield.png")
 		setting_manage_tabs.DoClick = function()
 			local frame = EasyChat.CreateFrame()
 			frame:SetSize(400, 285)
 			frame:SetTitle("Manage Tabs")
 
-			local setting_restricted_tabs = settings:AddSetting(category_name, "list", "Restricted Tabs")
+			local setting_restricted_tabs = settings:AddSetting(category_name, "list", "Запрещенные Вкладки")
 			setting_restricted_tabs:SetParent(frame)
 
 			local frame_tab_list = setting_restricted_tabs.List
@@ -653,7 +653,7 @@ local function create_default_settings()
 			build_frame_tab_list()
 			hook.Add("ECServerConfigUpdate", frame, build_frame_tab_list)
 
-			local setting_unrestrict_tab = settings:AddSetting(category_name, "action", "Unrestrict Tab")
+			local setting_unrestrict_tab = settings:AddSetting(category_name, "action", "Разрешить Вкладку")
 			setting_unrestrict_tab:SetParent(frame)
 			setting_unrestrict_tab:SetImage("icon16/shield.png")
 			setting_unrestrict_tab.DoClick = function()
@@ -672,7 +672,7 @@ local function create_default_settings()
 			spacer:SetParent(frame)
 			spacer:DockMargin(10, 0, 10, 20)
 
-			local setting_restrict_tab_name = settings:AddSetting(category_name, "string", "Tab Name")
+			local setting_restrict_tab_name = settings:AddSetting(category_name, "string", "Название Вкладки")
 			setting_restrict_tab_name:SetParent(frame)
 			setting_restrict_tab_name.OnEnter = function(self)
 				local succ, err = EasyChat.Config:WriteTab(self:GetText(), false)
@@ -682,7 +682,7 @@ local function create_default_settings()
 				end
 			end
 
-			local setting_restrict_tab = settings:AddSetting(category_name, "action", "Restrict Tab")
+			local setting_restrict_tab = settings:AddSetting(category_name, "action", "Запретить Вкладку")
 			setting_restrict_tab:SetParent(frame)
 			setting_restrict_tab:SetImage("icon16/shield.png")
 			setting_restrict_tab.DoClick = function()
@@ -696,27 +696,27 @@ local function create_default_settings()
 		settings:AddSpacer(category_name)
 
 		if EasyChat.GUI.RichText and EasyChat.GUI.RichText.ClassName == "RichTextX" then
-			settings:AddConvarSetting(category_name, "number", EC_MODERN_TEXT_HISTORY_LIMIT, "History Line Limit", 5000, -1)
+			settings:AddConvarSetting(category_name, "number", EC_MODERN_TEXT_HISTORY_LIMIT, "Лимит линий в Истории чата", 5000, -1)
 		end
 
 		if EasyChat.CanUseCEFFeatures() then
-			local setting_legacy_entry = settings:AddSetting(category_name, "action", EC_LEGACY_ENTRY:GetBool() and "Use Modern Textbox" or "Use Legacy Textbox")
+			local setting_legacy_entry = settings:AddSetting(category_name, "action", EC_LEGACY_ENTRY:GetBool() and "Использовать Modern Чат" or "Использовать Legacy Чат")
 			setting_legacy_entry.DoClick = function()
 				EC_LEGACY_ENTRY:SetBool(not EC_LEGACY_ENTRY:GetBool())
 			end
 
-			local setting_legacy_text = settings:AddSetting(category_name, "action", EC_LEGACY_TEXT:GetBool() and "Use Modern RichText" or "Use Legacy RichText")
+			local setting_legacy_text = settings:AddSetting(category_name, "action", EC_LEGACY_TEXT:GetBool() and "Использовать Modern RichText" or "Использовать Legacy RichText")
 			setting_legacy_text.DoClick = function()
 				EC_LEGACY_TEXT:SetBool(not EC_LEGACY_TEXT:GetBool())
 			end
 		end
 
-		local setting_dermaskin = settings:AddSetting(category_name, "action", EC_USE_DERMASKIN:GetBool() and "Use Custom Skin" or "Use Dermaskin")
+		local setting_dermaskin = settings:AddSetting(category_name, "action", EC_USE_DERMASKIN:GetBool() and "Использовать Custom Skin" or "Использовать Dermaskin")
 		setting_dermaskin.DoClick = function()
 			EC_USE_DERMASKIN:SetBool(not EC_USE_DERMASKIN:GetBool())
 		end
 
-		local setting_clear_history = settings:AddSetting(category_name, "action", "Clear History")
+		local setting_clear_history = settings:AddSetting(category_name, "action", "Удалить Историю Чата")
 		setting_clear_history.DoClick = function()
 			local files, _ = file.Find("easychat/history/*_history.txt", "DATA")
 			for _, f in pairs(files) do
@@ -750,10 +750,10 @@ local function create_default_settings()
 			return icon
 		end
 
-		local setting_tags_names = settings:AddSetting(category_name, "boolean", "(ADMIN) Allow tags in names")
+		local setting_tags_names = settings:AddSetting(category_name, "boolean", "(ADMIN) Разрешить тэги в имени")
 		create_admin_shield_icon(setting_tags_names)
 
-		local setting_tags_msgs = settings:AddSetting(category_name, "boolean", "(ADMIN) Allow tags in messages")
+		local setting_tags_msgs = settings:AddSetting(category_name, "boolean", "(ADMIN) Разрешить тэги в сообщениях")
 		create_admin_shield_icon(setting_tags_msgs)
 
 		setting_tags_names:SetChecked(EasyChat.Config.AllowTagsInNames)
@@ -784,7 +784,7 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		local setting_font_editor = settings:AddSetting(category_name, "action", "Font Editor")
+		local setting_font_editor = settings:AddSetting(category_name, "action", "Редактор Шрифта")
 		setting_font_editor.DoClick = function()
 			local editor = vgui.Create("ECChatHUDFontEditor")
 			editor:MakePopup()
@@ -796,19 +796,19 @@ local function create_default_settings()
 		settings:AddSpacer(category_name)
 
 		settings:AddConvarSettingsSet(category_name, {
-			[EC_HUD_FOLLOW] = "Follow the chatbox window",
-			[EC_HUD_SMOOTH] = "Smooth message transitions",
-			[EC_HUD_SH_CLEAR] = "Clear the tags upon saying \'sh\'",
-			[EC_HUD_CUSTOM] = "Use EasyChat's custom hud",
+			[EC_HUD_FOLLOW] = "Следовать за окном чата",
+			[EC_HUD_SMOOTH] = "Плавные переходы сообщений",
+			[EC_HUD_SH_CLEAR] = "Удалять тэги при написании \'sh\'",
+			[EC_HUD_CUSTOM] = "Использовать кастомный HUD SimpleChat",
 		})
 
 		settings:AddSpacer(category_name)
 
-		settings:AddConvarSetting(category_name, "number", EC_HUD_WIDTH, "HUD Width", 1250, 250)
-		settings:AddConvarSetting(category_name, "number", EC_HUD_POS_X, "HUD X Pos", 5000, 0)
-		settings:AddConvarSetting(category_name, "number", EC_HUD_POS_Y, "HUD Y Pos", 5000, 0)
+		settings:AddConvarSetting(category_name, "number", EC_HUD_WIDTH, "Ширина HUD", 1250, 250)
+		settings:AddConvarSetting(category_name, "number", EC_HUD_POS_X, "X позиция HUD", 5000, 0)
+		settings:AddConvarSetting(category_name, "number", EC_HUD_POS_Y, "Y позиция HUD", 5000, 0)
 
-		local setting_reset_hud_bounds = settings:AddSetting(category_name, "action", "Reset HUD Bounds")
+		local setting_reset_hud_bounds = settings:AddSetting(category_name, "action", "Сбросить границы HUD")
 		setting_reset_hud_bounds.DoClick = function()
 			EC_HUD_WIDTH:SetInt(-1)
 			EC_HUD_POS_X:SetInt(-1)
@@ -817,10 +817,10 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		settings:AddConvarSetting(category_name, "number", EC_HUD_TTL, "Message Life Time", 60, 2)
-		settings:AddConvarSetting(category_name, "number", EC_HUD_FADELEN, "Message Fadeout Time", 5, 1)
+		settings:AddConvarSetting(category_name, "number", EC_HUD_TTL, "Длительность показа сообщения", 60, 2)
+		settings:AddConvarSetting(category_name, "number", EC_HUD_FADELEN, "Время скрытия сообщения", 5, 1)
 
-		local setting_reset_duration = settings:AddSetting(category_name, "action", "Reset Message Life/Fadeout Time")
+		local setting_reset_duration = settings:AddSetting(category_name, "action", "Сбросить Время показа/скрытия сообщения")
 		setting_reset_duration.DoClick = function()
 			local default_duration = tonumber(EC_HUD_TTL:GetDefault())
 			EC_HUD_TTL:SetInt(default_duration)
@@ -835,7 +835,7 @@ local function create_default_settings()
 		local category_name = "Ranks"
 		settings:AddCategory(category_name)
 
-		local setting_override_client_settings = settings:AddSetting(category_name, "boolean", "Server settings override client settings")
+		local setting_override_client_settings = settings:AddSetting(category_name, "boolean", "Настройки сервера перезаписывают настройки клиента")
 		setting_override_client_settings:SetChecked(EasyChat.Config.OverrideClientSettings)
 		setting_override_client_settings.OnChange = function(self, enabled)
 			local succ, err = EasyChat.Config:WriteSettingOverride(enabled)
@@ -848,7 +848,7 @@ local function create_default_settings()
 
 		settings:AddSpacer(category_name)
 
-		local setting_usergroups = settings:AddSetting(category_name, "list", "Rank Prefixes")
+		local setting_usergroups = settings:AddSetting(category_name, "list", "Префиксы Ранга")
 		local prefix_list = setting_usergroups.List
 		prefix_list:SetMultiSelect(true)
 		prefix_list:AddColumn("Usergroup")
@@ -884,7 +884,7 @@ local function create_default_settings()
 
 			local frame = EasyChat.CreateFrame()
 			frame:SetSize(400, 400)
-			frame:SetTitle(usergroup and "Modify Rank" or "New Rank")
+			frame:SetTitle(usergroup and "Изменить Ранг" or "Новый Ранг")
 
 			local setting_usergroup = settings:AddSetting(category_name, "string", "Usergroup")
 			setting_usergroup:SetParent(frame)
@@ -911,7 +911,7 @@ local function create_default_settings()
 				setting_tag:SetText(EasyChat.Config.UserGroups[usergroup].Tag)
 			end
 
-			local setting_save = settings:AddSetting(category_name, "action", "Save")
+			local setting_save = settings:AddSetting(category_name, "action", "Сохранить")
 			setting_save:SetParent(frame)
 			setting_save:Dock(BOTTOM)
 			setting_save:DockMargin(5, 10, 5, 5)
@@ -1057,17 +1057,17 @@ local function create_default_settings()
 
 		build_usergroup_list()
 
-		local setting_add_usergroup = settings:AddSetting(category_name, "action", "(ADMIN) Setup New Rank")
+		local setting_add_usergroup = settings:AddSetting(category_name, "action", "(ADMIN) Настроить Новый Ранг")
 		setting_add_usergroup:SetImage("icon16/shield.png")
 		setting_add_usergroup.DoClick = function()
 			setup_rank()
 		end
 
-		local setting_modify_usergroup = settings:AddSetting(category_name, "action", "(ADMIN) Modify Rank")
+		local setting_modify_usergroup = settings:AddSetting(category_name, "action", "(ADMIN) Изменить Ранг")
 		setting_modify_usergroup:SetImage("icon16/shield.png")
 		setting_modify_usergroup.DoClick = modify_rank
 
-		local setting_del_usergroup = settings:AddSetting(category_name, "action", "(ADMIN) Delete Rank")
+		local setting_del_usergroup = settings:AddSetting(category_name, "action", "(ADMIN) Удалить Ранг")
 		setting_del_usergroup:SetImage("icon16/shield.png")
 		setting_del_usergroup.DoClick = delete_rank
 
@@ -1195,7 +1195,7 @@ local function add_chathud_markup_settings()
 
 	settings:AddSpacer(category_name)
 
-	local setting_help = settings:AddSetting(category_name, "action", "Show Help & Examples")
+	local setting_help = settings:AddSetting(category_name, "action", "Показать Помощь И Примеры")
 	setting_help.DoClick = function()
 		RunConsoleCommand("easychat_hud_examples")
 	end
